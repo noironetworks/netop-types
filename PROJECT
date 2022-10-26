@@ -1,0 +1,19 @@
+domain: netop-types.io
+layout:
+- go.kubebuilder.io/v3
+multigroup: true
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: netop-types
+repo: github.com/noironetworks/netop-types
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: netop-types.io
+  group: notification-ctrlr
+  kind: Notification
+  path: github.com/noironetworks/netop-types/apis/notification-ctrlr/v1
+  version: v1
+version: "3"
