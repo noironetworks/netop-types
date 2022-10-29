@@ -15,7 +15,7 @@ spec:
     singular: notification
   scope: Cluster
   versions:
-  - name: v1
+  - name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Notification is the Schema for the notifications API

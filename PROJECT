@@ -14,6 +14,6 @@ resources:
   domain: netop-types.io
   group: notification-ctrlr
   kind: Notification
-  path: github.com/noironetworks/netop-types/apis/notification-ctrlr/v1
-  version: v1
+  path: github.com/noironetworks/netop-types/apis/notification-ctrlr/v1alpha1
+  version: v1alpha1
 version: "3"
