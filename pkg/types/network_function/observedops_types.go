@@ -43,11 +43,13 @@ type ObservedOpsStatus struct {
 	Multus     bool   `json:"Multus,omitempty"`
 }
 
+// Constants for detected CNI types
 const (
-	Cilium   = "cilium"
-	NotFound = "not-found"
-	Calico   = "calico"
-	Aci      = "aci-cni"
+	CNICilium   = "cko-cni-cilium"
+	CNINotFound = "not-found"
+	CNICalico   = "cko-cni-calico"
+	CNIAci      = "cko-cni-aci"
+	CNIAWSVPC   = "cko-cni-awsvpc"
 )
 
 // ObservedOps is the Schema for the observedops API.
