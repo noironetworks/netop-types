@@ -43,7 +43,7 @@ const (
 // NotificationStatus defines the observed state of Notification
 type NotificationStatus struct {
 	// State of syncing this object, when syncing is enabled
-	State NotificationState `json:"state"`
+	State NotificationState `json:"state,omitempty"`
 }
 
 //+kubebuilder:object:root=true
@@ -55,8 +55,8 @@ type Notification struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   NotificationSpec   `json:"spec,omitempty"`
-	Status NotificationStatus `json:"status,omitempty"`
+	Spec   NotificationSpec    `json:"spec,omitempty"`
+	Status *NotificationStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
