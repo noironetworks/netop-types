@@ -23,17 +23,44 @@ type Config struct {
 
 type WorkloadInfo struct {
 	Type      string            `json:"type"`
-	Options   map[string]string `json:"options,omitempty"`
+	Manifests map[string]string `json:"manifests,omitempty"`
 	Version   string            `json:"version"`
-	Unmanaged bool              `json:"unmanaged,omitempty"`
+	//+kubebuilder:default=false
+	ManagedComponent bool `json:"managedComponent,omitempty"`
 }
 
-type OpsState string
+type State string
 
 const (
-	OpsPending      OpsState = "Pending"
-	OpsAddFinalizer OpsState = "AddingFinalizer"
-	OpsRunnnig      OpsState = "Running"
-	OpsSucceeded    OpsState = "Succeeded"
-	OpsFailed       OpsState = "Failed"
+	Initializing State = "Initializing"
+	Pending      State = "Pending"
+	Finalizer    State = "AddingFinalizer"
+	Running      State = "Running"
+	Failed       State = "Failed"
+	Unknown      State = "Unknown"
+)
+
+// Conditions.
+const ConditionReady = "Updating"
+const ConditionProgressing = "Progressing"
+const ConditionAvailable = "Available"
+const ConditionDegraded = "Degraded"
+
+// Reasons.
+const ReasonProvisioningOPs = "ProvisioningOperator"
+const ReasonFailedProvisioningOps = "FailedProvisioningOperator"
+const ReasonProvisionedOps = "ProvisionedOperator"
+const ReasonOpsStateRunning = "OperatorRunning"
+const ReasonFailedMonitoringOps = "FailedMonitoringOperator"
+
+// cniNames.
+const (
+	CNIMultus   = "multus"
+	CNICilium   = "cko-cni-cilium"
+	CNICalico   = "cko-cni-calico"
+	CNIAci      = "cko-cni-aci"
+	CNIAWSVPC   = "cko-cni-awsvpc"
+	CNIOVN      = "cko-cni-ovn"
+	NetopCNI    = "network-operator-cni"
+	CNINotFound = "not-found"
 )

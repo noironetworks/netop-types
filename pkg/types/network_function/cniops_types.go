@@ -25,7 +25,8 @@ type CniOpsSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	Config Config `json:"config,omitempty"`
+	Config       Config              `json:"config,omitempty"`
+	ArrayOptions map[string][]string `json:"arrayOptions,omitempty"`
 }
 
 // CniOpsStatus defines the observed state of CniOps.
@@ -36,41 +37,21 @@ type CniOpsStatus struct {
 	CniType            string            `json:"cniType,omitempty"`
 	CniVersion         string            `json:"cniVersion,omitempty"`
 	CniStatus          map[string]string `json:"cniStatus,omitempty"`
-	InternalState      CniInternalState  `json:"internalState,omitempty"`
-	OperatorPhase      CniOperatorPhase  `json:"operatorStatus,omitempty"`
+	State              State             `json:"state,omitempty"`
 	ManagedState       CniManagedState   `json:"managedState,omitempty"`
 	UpgradeStatus      CniUpgradeStatus  `json:"upgradeStatus,omitempty"`
+	CniState           string            `json:"cniState,omitempty"`
 	ObservedGeneration int64             `json:"observedGeneration,omitempty"`
 	WorkloadCheck      map[string]string `json:"workloadCheck,omitempty"`
 	Ipam               string            `json:"ipam,omitempty"`
 }
-
-type CniInternalState string
-
-const (
-	CniInitializing CniInternalState = "Initializing" // determine operation = create/delete/upgrade/downgrade
-	CniProvisioning CniInternalState = "Provisioning"
-	CniAddFinalizer CniInternalState = "AddingFinalizer"
-	CniMonitoring   CniInternalState = "Monitoring"
-	CniFailed       CniInternalState = "Failed"
-)
-
-type CniOperatorPhase string
-
-const (
-	Pending   CniOperatorPhase = "Pending"
-	Running   CniOperatorPhase = "Running"
-	Succeeded CniOperatorPhase = "Succeeded"
-	Failed    CniOperatorPhase = "Failed"
-	Unknown   CniOperatorPhase = "Unknown"
-)
 
 type CniManagedState string
 
 const (
 	New       CniManagedState = "New"
 	Unmanaged CniManagedState = "Unmanaged" // Observed
-	Adopted   CniManagedState = "Adopted"
+	Imported  CniManagedState = "Imported"
 )
 
 type CniUpgradeStatus struct {
