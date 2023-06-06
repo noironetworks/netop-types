@@ -28,29 +28,20 @@ type ObservedOpsSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	CniMountPath   string   `json:"cniMountPath,omitempty"`
-	CniConfDirs    []string `json:"cniConfPath,omitempty"`
-	ForceReconcile int      `json:"forceReconcile,omitempty"`
+	CniTypes       []string            `json:"validCniTypes,omitempty"`
+	CniMountPaths  map[string][]string `json:"validCniMountPaths,omitempty"`
+	ForceReconcile int                 `json:"forceReconcile,omitempty"`
 }
 
 // ObservedOpsStatus defines the observed state of ObservedOps.
 type ObservedOpsStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-
-	CniType    string `json:"cniType,omitempty"`
-	CniVersion string `json:"cniVersion,omitempty"`
-	Multus     bool   `json:"Multus,omitempty"`
+	CniType     string `json:"cniType,omitempty"`
+	CniVersion  string `json:"cniVersion,omitempty"`
+	ChainedMode bool   `json:"chainedMode,omitempty"`
+	Multus      bool   `json:"multus,omitempty"`
 }
-
-// Constants for detected CNI types
-const (
-	CNICilium   = "cko-cni-cilium"
-	CNINotFound = "not-found"
-	CNICalico   = "cko-cni-calico"
-	CNIAci      = "cko-cni-aci"
-	CNIAWSVPC   = "cko-cni-awsvpc"
-)
 
 // ObservedOps is the Schema for the observedops API.
 type ObservedOps struct {

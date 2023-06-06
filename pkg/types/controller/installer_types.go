@@ -17,11 +17,10 @@ limitations under the License.
 package controller
 
 import (
-	"errors"
-
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 // InstallerSpec defines the desired state of Installer.
@@ -29,52 +28,46 @@ type InstallerSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
+	// OperatorConfigs describes Platform and Network components to be provisioned and managed
 	OperatorConfigs OperatorConfigs `json:"operatorConfigs,omitempty"`
 }
 
 type OperatorConfigs struct {
-	Platform   map[PlatformOperators]OperatorInfo   `json:"platform,omitempty"`
-	Networking map[NetworkingOperators]OperatorInfo `json:"networking,omitempty"`
+	// Platform will contain a map describing auxiliary applications/features
+	Platform map[PlatformOperator]OperatorInfo `json:"platform,omitempty"`
+	// Network will contain a map describing Networking operators
+	Network map[NetworkOperator]OperatorInfo `json:"network,omitempty"`
 }
 
+// OperatorInfo describes OPerators that can be managed by the Installer
 type OperatorInfo struct {
-	OPSubType        OPSubType           `json:"type,omitempty"`
-	Options          map[string]string   `json:"options,omitempty"`
-	ArrayOptions     map[string][]string `json:"arrayOptions,omitempty"`
-	WorkloadVersion  string              `json:"version,omitempty"`
-	ManagedComponent bool                `json:"managedComponent,omitempty"`
+	OPSubType OPSubType `json:"type,omitempty"`
+	// Manifests will contain base64 encoded specs of the operator to be managed by netop-manager.
+	Manifests       map[string]string   `json:"manifests,omitempty"`
+	ArrayOptions    map[string][]string `json:"arrayOptions,omitempty"`
+	WorkloadVersion string              `json:"version,omitempty"`
+	// ManagedComponent field is ignored for platform components and must be set to false to adopt networking components without managing them.
+	ManagedComponent bool `json:"managedComponent,omitempty"`
 }
 
-type PlatformOperators string
+// Installer Components.
+const Platform = "Platform"
+const Network = "Network"
+
+type PlatformOperator string
 
 const (
-	Observed   PlatformOperators = "cko-observed"
-	Diagnostic PlatformOperators = "cko-diagnostic"
-	G          PlatformOperators = "cko-gitops"
+	Observed   PlatformOperator = "cko-observed"
+	Diagnostic PlatformOperator = "cko-diagnostic"
+	Git        PlatformOperator = "cko-gitops"
 )
 
-func (p PlatformOperators) IsValid() error {
-	switch p {
-	case Observed, G, Diagnostic:
-		return nil
-	}
-	return errors.New("invalid platform.network-function type")
-}
-
-type NetworkingOperators string
+type NetworkOperator string
 
 const (
-	CNI NetworkingOperators = "cko-cni"
-	SM  NetworkingOperators = "cko-sm"
+	CNI NetworkOperator = "cko-cni"
+	SM  NetworkOperator = "cko-sm"
 )
-
-func (n NetworkingOperators) IsValid() error {
-	switch n {
-	case CNI, SM:
-		return nil
-	}
-	return errors.New("invalid networking.network-function type")
-}
 
 type OPSubType string
 
@@ -96,30 +89,45 @@ const (
 type InstallerStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
-
-	ObservedGeneration int64              `json:"observedGeneration,omitempty"`
-	InstallerPhase     Phase              `json:"operatorStatus,omitempty"`
-	ComponentStatus    map[string]NFState `json:"componentStatus,omitempty"`
-	// store count of nodes, ns, pods & services
-	ClusterOverview map[string]int `json:"clusterOverview,omitempty"`
+	Conditions          []metav1.Condition          `json:"conditions,omitempty"`
+	ObservedGeneration  int64                       `json:"observedGeneration,omitempty"`
+	InstallerPhase      Phase                       `json:"phase,omitempty"`
+	ComponentConditions map[string]metav1.Condition `json:"componentStatus,omitempty"`
 }
 
 type Phase string
 
 const (
-	Pending   Phase = "Pending"
-	Running   Phase = "Running"
-	Succeeded Phase = "Succeeded"
-	Failed    Phase = "Failed"
-	Unknown   Phase = "Unknown"
+	Pending     Phase = "Pending"
+	Running     Phase = "Running"
+	Failed      Phase = "Failed"
+	Unknown     Phase = "Unknown"
+	Terminating Phase = "Terminating"
 )
 
+// Conditions.
+const ConditionProvisioned = "Provisioned"
+const ConditionProvisionComplete = "Complete"
+const ConditionProvisionError = "Error"
+
+// Reasons.
+const InstallerReasonProvisionedChildCR = "InstallerProvisionedCR"
+const InstallerReasonFailedProvisioningChildCR = "InstallerFailedProvisioningCR"
+const InstallerReasonChildStateRunning = "ChildStateRunning"
+const InstallerReasonChildStateError = "ChildStateError"
+
+// Annotations and Labels.
+const InstallerBase = "netop-manager.io/"
+const InstallerComponent = "netop-manager.io/component"
+const InstallerComponentType = "netop-manager.io/type"
+
 type NFState struct {
-	Type    OPSubType `json:"type,omitempty"`
-	Status  string    `json:"status,omitempty"`
-	NFState string    `json:"state,omitempty"`
+	Type        OPSubType `json:"type,omitempty"`
+	Mode        string    `json:"mode,omitempty"`
+	LastUpdated string    `json:"lastUpdated,omitempty"`
 }
 
+// Installer is the Schema for the installers API
 type Installer struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
