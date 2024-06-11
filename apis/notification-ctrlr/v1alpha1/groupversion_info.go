@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 // Package v1alpha1 contains API Schema definitions for the notification-ctrlr v1alpha1 API group
-//+kubebuilder:object:generate=true
-//+groupName=notification-ctrlr.netop-types.io
+// +kubebuilder:object:generate=true
+// +groupName=notification-ctrlr.netop-types.io
 package v1alpha1
 
 import (
